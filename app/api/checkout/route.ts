@@ -16,7 +16,7 @@ export async function POST(req: Request) {
           product_data: {
             name: item.name,
           },
-          unit_amount: item.price * 100, // Stripe usa centavos
+          unit_amount: item.price * 100,
         },
         quantity: item.quantity,
       })),
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ url: session.url })
   } catch (error) {
-    console.error('Stripe error:', error)
+    console.error(error)
     return NextResponse.json(
       { error: 'Error creando sesión de pago' },
       { status: 500 }
