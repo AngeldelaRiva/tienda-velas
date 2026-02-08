@@ -1,4 +1,4 @@
-export const products = [
+const products = [
   {
     id: "lavanda",
     name: "Vela de Lavanda",
@@ -20,4 +20,6 @@ export const products = [
     price: 260,
     image: "/images/citrica.jpg",
   },
-];
+]
+
+export default products
