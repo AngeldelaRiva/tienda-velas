@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
+import { NextResponse } from 'next/server'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
@@ -8,8 +8,8 @@ export async function POST(req: Request) {
     const { items } = await req.json()
 
     const session = await stripe.checkout.sessions.create({
-      mode: 'payment',
       payment_method_types: ['card'],
+      mode: 'payment',
       line_items: items.map((item: any) => ({
         price_data: {
           currency: 'mxn',
@@ -20,16 +20,13 @@ export async function POST(req: Request) {
         },
         quantity: item.quantity,
       })),
-      success_url: `${process.env.NEXTAUTH_URL}/success`,
-      cancel_url: `${process.env.NEXTAUTH_URL}/cancel`,
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success`,
+      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/cancel`,
     })
 
     return NextResponse.json({ url: session.url })
   } catch (error) {
     console.error(error)
-    return NextResponse.json(
-      { error: 'Error creando sesión de pago' },
-      { status: 500 }
-    )
+    return new NextResponse('Error creating checkout session', { status: 500 })
   }
 }
