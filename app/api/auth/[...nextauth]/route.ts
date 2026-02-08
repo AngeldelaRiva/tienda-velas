@@ -1,7 +1,7 @@
-import NextAuth from 'next-auth'
-import GoogleProvider from 'next-auth/providers/google'
+import NextAuth from "next-auth"
+import GoogleProvider from "next-auth/providers/google"
 
-export const authOptions = {
+const handler = NextAuth({
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -10,37 +10,35 @@ export const authOptions = {
   ],
 
   callbacks: {
-    async signIn({ user }) {
+    async signIn({ user }: { user: any }) {
       // SOLO ESTE CORREO SERÁ ADMIN
-      const adminEmail = 'urbinaa363@gmail.com'
+      const adminEmail = "urbinaa363@gmail.com"
 
-      if (user.email === adminEmail) {
-        ;(user as any).role = 'admin'
+      if (user?.email === adminEmail) {
+        user.role = "admin"
       } else {
-        ;(user as any).role = 'user'
+        user.role = "user"
       }
 
       return true
     },
 
-    async jwt({ token, user }) {
+    async jwt({ token, user }: { token: any; user?: any }) {
       if (user) {
-        token.role = (user as any).role
+        token.role = user.role
       }
       return token
     },
 
-    async session({ session, token }) {
+    async session({ session, token }: { session: any; token: any }) {
       if (session.user) {
-        ;(session.user as any).role = token.role
+        session.user.role = token.role
       }
       return session
     },
   },
 
   secret: process.env.NEXTAUTH_SECRET,
-}
-
-const handler = NextAuth(authOptions)
+})
 
 export { handler as GET, handler as POST }
